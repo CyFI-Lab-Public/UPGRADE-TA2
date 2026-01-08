@@ -1,0 +1,36 @@
+// da16200.repl - Bootstrapped Platform Definition
+
+// 1. Define the NVIC (Required for Cortex-M)
+// Standard ARM NVIC address is 0xE000E000
+nvic: IRQControllers.NVIC @ sysbus 0xE000E000
+    priorityMask: 0xF0 // Standard priority mask for Cortex-M4
+
+// 2. Define the CPU
+// We pass the 'nvic' object defined above to the cpuType constructor
+cpu: CPU.CortexM @ sysbus
+    cpuType: "cortex-m4f"
+    nvic: nvic
+
+// 3. Memory Map
+// sram: Memory.MappedMemory @ sysbus 0x00080000
+//     size: 0x00080000
+
+// Flash: 4MB (Mapped to 0x00000000 for Boot/XIP)
+flash: Memory.MappedMemory @ sysbus 0x00000000
+    size: 0x00400000
+
+// 4. Peripherals
+// UART0: Used for debug logs.
+// CRITICAL: You MUST replace '0x4000????' with the actual UART0_BASE address
+// from your firmware source code (search for UART0_BASE in da16200.h).
+// Common Renesas/Dialog addresses might be 0x50000000 or similar.
+// If you don't know it yet, leave it as is, but logs won't appear until it's correct.
+uart0: UART.PL011 @ sysbus 0x40008000
+    IRQ -> nvic@0  // Sends interrupt 0 to the NVIC
+
+// 5. System Control / Watchdog (Dummy to prevent crashes)
+// If the firmware writes to unknown addresses, add them here as dummy peripherals.
+sysctrl: Python.PythonPeripheral @ sysbus 0x50000000
+    size: 0x1000
+    initable: true
+    script: "request.value = 0"
