@@ -1,0 +1,11 @@
+mach create
+machine LoadPlatformDescription @neuralert.repl
+
+sysbus LoadELF @/path/to/neuralert_firmware/build/neuralert.elf true
+
+sysbus.cpu VectorTableOffset 0x00101400
+
+sysbus.cpu SP 0x00080DFC
+sysbus.cpu PC 0x00101651
+
+start
