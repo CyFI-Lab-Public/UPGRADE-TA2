@@ -1,14 +1,24 @@
-// SRAM window from mem.ld: 0x00080000 .. 0x000FFFFF
+// ============================================================================
+// MEMORY REGIONS
+// ============================================================================
+
+// SRAM: 0x00080000 - 0x000FFFFF (512KB)
 sram: Memory.MappedMemory @ sysbus 0x00080000
     size: 0x00080000
 
-// CACHE execution window from mem.ld: 0x00100000 .. 0x002FFFFF
+// CACHE/Code execution: 0x00100000 - 0x002FFFFF (2MB)
 cache: Memory.MappedMemory @ sysbus 0x00100000
     size: 0x00200000
 
-nvic: IRQControllers.NVIC @ sysbus 0xE000E000
-    priorityMask: 0xF0
+// ============================================================================
+// CPU AND CORE PERIPHERALS
+// ============================================================================
 
 cpu: CPU.CortexM @ sysbus
     cpuType: "cortex-m4f"
     nvic: nvic
+
+nvic: IRQControllers.NVIC @ sysbus 0xE000E000
+    priorityMask: 0xF0
+    systickFrequency: 120000000
+    -> cpu@0

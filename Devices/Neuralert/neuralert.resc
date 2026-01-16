@@ -1,11 +1,16 @@
-mach create
+mach create "neuralert"
 machine LoadPlatformDescription @neuralert.repl
 
-sysbus LoadELF @/path/to/neuralert_firmware/build/neuralert.elf true
+# Load ELF using virtual addresses
+sysbus LoadELF @../build/neuralert.elf true
 
+# Configure vector table
 sysbus.cpu VectorTableOffset 0x00101400
 
+# Set initial SP and PC from vector table
 sysbus.cpu SP 0x00080DFC
 sysbus.cpu PC 0x00101651
+
+machine StartGdbServer 3333
 
 start
